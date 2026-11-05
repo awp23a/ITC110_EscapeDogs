@@ -1,0 +1,4 @@
+repository "ITC110_EscapeDogs 2026-11-05_14-23-40/ITC110_EscapeDogs@1375981810888@cloud"
+  path "/"
+    br "/main"
+    co "/main"
