@@ -98,7 +98,7 @@ public class PlayerController : MonoBehaviour
                     gameManager.StartEnemyTurn();
                     break;
                 case Things.Enemy:
-                    // insert attack function here
+                    Attack(targetTile);
                     gameManager.StartEnemyTurn();
                     break;
                 case Things.Interactable:
