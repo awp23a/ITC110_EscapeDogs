@@ -44,6 +44,8 @@ public class Registry : MonoBehaviour
     {
         yield return new WaitForSeconds(0.25f); // inital wait, can be adjusted
 
+        // Debug.Log("Enemies are taking their turns");
+
         // If the enemy exists, have it take its turn
         foreach (IEnemyTurn enemy in enemies.ToArray())
         {
@@ -61,6 +63,8 @@ public class Registry : MonoBehaviour
                     
             }
         }
+
+        // Debug.Log("Enemies have taken their turns; handing it back to the player");
 
         gameManager.StartPlayerTurn(); // hand control back to the player
     }

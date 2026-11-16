@@ -50,6 +50,7 @@ public class PlayerController : MonoBehaviour
         if( gameManager.IsPlayerTurn()  && playerWait.action.WasPressedThisFrame() && inPosition )
         {
             // player's turn and they want to wait
+            // Debug.Log("Player chose to wait; starting enemy turn");
             gameManager.StartEnemyTurn();
         }
 
@@ -78,15 +79,23 @@ public class PlayerController : MonoBehaviour
         Vector3Int targetTile = new Vector3Int(move.x + (int)logicPoint.position.x, move.y + (int)logicPoint.position.y, 0);
         if( gameManager.gridManager.grid.ContainsKey(targetTile) )
         {
-            switch(gameManager.gridManager.grid[targetTile].thingOnTile )
+            switch( gameManager.gridManager.grid[targetTile].thingOnTile )
             {
                 case Things.Nothing:
                     // update the things on the tiles we're moving between
+                    Vector3Int oldTile = Vector3Int.FloorToInt(logicPoint.position);
+
+                    Debug.Log($"Old Tile: {oldTile}, ThingOnTile: {gameManager.gridManager.grid[oldTile].thingOnTile}");
+
                     gameManager.gridManager.grid[Vector3Int.FloorToInt(logicPoint.position)].thingOnTile = Things.Nothing;
-                    gameManager.gridManager.grid[targetTile].thingOnTile = Things.Player;
 
                     // move the player
                     logicPoint.position += new Vector3(move.x, move.y, 0);
+
+                    gameManager.gridManager.grid[Vector3Int.FloorToInt(logicPoint.position)].thingOnTile = Things.Player;
+
+                    Debug.Log($"Old Tile: {oldTile}, ThingOnTile: {gameManager.gridManager.grid[oldTile].thingOnTile}");
+                    Debug.Log($"Current Tile: {Vector3Int.FloorToInt(logicPoint.position)}, ThingOnTile: {gameManager.gridManager.grid[Vector3Int.FloorToInt(logicPoint.position)].thingOnTile}");
 
                     // recalculate the distances from the player
                     gameManager.gridManager.CalculatePlayerDistances();
@@ -95,18 +104,22 @@ public class PlayerController : MonoBehaviour
                     // insert if-else block here with random
 
                     // start the enemies' turns
+                    // Debug.Log("Player chose to move; starting enemy turn");
                     gameManager.StartEnemyTurn();
                     break;
                 case Things.Enemy:
                     Attack(targetTile);
+                    // Debug.Log("Player chose to attack; starting enemy turn");
                     gameManager.StartEnemyTurn();
                     break;
                 case Things.Interactable:
                     // insert pickup function here
+                    // Debug.Log("Player chose to interact; starting enemy turn");
                     gameManager.StartEnemyTurn();
                     break;
                 default:
                     // something on tile that we can't do anything with, restart the turn to be forgiving
+                    Debug.Log($"Cannot move there. Thing on tile: {gameManager.gridManager.grid[targetTile].thingOnTile}");
                     gameManager.StartPlayerTurn();
                     break;
             }
@@ -134,5 +147,12 @@ public class PlayerController : MonoBehaviour
 
         // deal damage to the enemy
         target.hp = Mathf.Max(0, target.hp - damage);
+        Debug.Log($"Attacked Enemy! Enemy HP: {target.hp} / {target.maxhp}");
+
+        // if we did enough damage to kill the enemy, destroy it
+        if ( target.hp <= 0)
+        {
+            Destroy(enemy);
+        }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public enum PlannedAction
 {
@@ -31,15 +32,18 @@ public class EnemyMovementLogic : MonoBehaviour
         if( containsPlayer )
         {
             // here, we get the player's script
-            PlayerController player = GameObject.Find("Player(Placeholder)").GetComponent<PlayerController>();
+            PlayerController player = GameObject.Find("Player (Placeholder)").GetComponent<PlayerController>();
 
             // check to see if the attack crits
             float critCheck = UnityEngine.Random.Range(0f, 1f);
             bool crit = critCheck < enemy.critChance;
             int damage = crit ? (int)(enemy.critMult * enemy.atk) : enemy.atk;
 
-            // deal damage to the enemy
+            // deal damage to the player
             player.hp = Mathf.Max(0, player.hp - damage);
+            Debug.Log($"Attacked Player! Player HP: {player.hp} / {player.maxhp}");
+
+            // insert fail/reset script here
         }
     }
 
@@ -93,17 +97,18 @@ public class EnemyMovementLogic : MonoBehaviour
             }
         }
 
-        //Debug.Log(
-        //    $"Enemy selected move {move}, " +
-        //    $"planned action {plannedAction}"
-        //);
-
         // if we planned a move into the tile the player is in, then we planned an attack
         if (enemy.gameManager.gridManager.grid[pos + move].thingOnTile is Things.Player)
         {
             plannedAction = PlannedAction.Attack;
             // Debug.Log($"Enemy plans to attack in direction {move}");
         }
+
+        Debug.Log(
+           $"Enemy selected move {move}, " +
+           $"planned action {plannedAction}" + 
+           $", Thing on target tile: {enemy.gameManager.gridManager.grid[pos + move].thingOnTile}"
+        );
 
         // when we exit, we have the best possible move for this logic stored in "move"
         return move;

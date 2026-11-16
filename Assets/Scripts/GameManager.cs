@@ -29,7 +29,7 @@ public class GameManager : MonoBehaviour
     public void StartEnemyTurn()
     {
         currentTurn = TurnState.Enemy;
-        registry.EnemyTurnSequence();
+        StartCoroutine(registry.EnemyTurnSequence());
     }
     public void WaitForAction()
     {
