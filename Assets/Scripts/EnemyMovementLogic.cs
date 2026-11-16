@@ -31,7 +31,7 @@ public class EnemyMovementLogic : MonoBehaviour
         if( containsPlayer )
         {
             // here, we get the player's script
-            PlayerController player = GameObject.Find("Player(Placeholder)").GetComponent<PlayerController>();
+            PlayerController player = GameObject.Find("Player (Placeholder)").GetComponent<PlayerController>();
 
             // check to see if the attack crits
             float critCheck = UnityEngine.Random.Range(0f, 1f);
