@@ -62,6 +62,8 @@ public class GridManager : MonoBehaviour
         InitializeGrid();   // load all the tiles initially on screen
         playerGridPos = Vector3Int.FloorToInt(playerMovePoint.transform.position);  // set the player's starting position
         grid[playerGridPos].thingOnTile = Things.Player;    // make sure the tile knows it has a player on it
+        // Debug.Log($"Thing on tile {playerGridPos} assigned: {grid[playerGridPos].thingOnTile}");
+
         CalculatePlayerDistances();
         // We only call CalculatePOIDistances when a POI is created/destroyed
     }

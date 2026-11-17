@@ -219,6 +219,13 @@ public class EnemyMovementLogic : MonoBehaviour
 
     public Vector3Int GoalCamp(Vector3Int pos)
     {
+        // if the list of pois is empty, act with basic move
+        if( enemy.gameManager.registry.pois.Count == 0 )
+        {
+            Debug.Log("No POIs; defaulting to basic move");
+            return BasicEnemyMove(pos);
+        }
+
         Vector3Int move = Vector3Int.zero;
         Things[] acceptableThings = {
             Things.Nothing,
@@ -305,6 +312,13 @@ public class EnemyMovementLogic : MonoBehaviour
 
     public Vector3Int GoalProtect(Vector3Int pos)
     {
+        // if the list of pois is empty, act with smart move
+        if (enemy.gameManager.registry.pois.Count == 0)
+        {
+            Debug.Log("No POIs; defaulting to smart move");
+            return SmartEnemyMove(pos);
+        }
+
         Vector3Int move = Vector3Int.zero;
         Things[] acceptableThings = {
             Things.Nothing,
