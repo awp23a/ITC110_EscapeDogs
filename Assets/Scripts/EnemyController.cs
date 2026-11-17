@@ -44,7 +44,12 @@ public class EnemyController : MonoBehaviour, IEnemyTurn
     {
         logicPoint.parent = null;   // unassign the parent so movement is not infinite
         gameManager.registry.RegisterEnemy(this);   // register this enemy so it will take turns
+
+        GridPosition = Vector3Int.FloorToInt(transform.position);
         gameManager.gridManager.grid[GridPosition].thingOnTile = Things.Enemy;
+        // Debug.Log($"Thing on tile {GridPosition} assigned: {gameManager.gridManager.grid[GridPosition].thingOnTile}");
+
+        movementLogic = GetComponent<EnemyMovementLogic>();
 
         GridPosition = Vector3Int.FloorToInt(logicPoint.position);
 
@@ -117,7 +122,8 @@ public class EnemyController : MonoBehaviour, IEnemyTurn
         }
         if (logicPoint != null && gameManager.gridManager.grid != null)
         {
-            gameManager.gridManager.grid[Vector3Int.FloorToInt(logicPoint.position)].thingOnTile = Things.Nothing;
+            gameManager.gridManager.grid[GridPosition].thingOnTile = Things.Nothing;
+            // Debug.Log($"Thing on tile {GridPosition} assigned: {gameManager.gridManager.grid[GridPosition].thingOnTile}");
         }
         if (logicPoint != null)
         {
@@ -133,6 +139,7 @@ public class EnemyController : MonoBehaviour, IEnemyTurn
             // the enemy is on "Cooldown"
             CurrentDelay -= 1;
 
+            // Debug.Log($"Stored Move: {plannedMove}; Executing!");
             // the enemy will still attempt to execute its stored move, then clear it
             if (movementLogic.plannedAction is PlannedAction.Attack)
             {
@@ -144,6 +151,8 @@ public class EnemyController : MonoBehaviour, IEnemyTurn
                 yield return ExecuteMove(plannedMove);
             }
 
+            // Debug.Log("This turn was a skipped turn, reset move to 0 so it doesn't keep moving");
+            plannedMove = Vector3Int.zero;
         }
         else
         {
@@ -201,19 +210,20 @@ public class EnemyController : MonoBehaviour, IEnemyTurn
 
         // check to see if the move is still valid
         // an enemy can plan to move to where another enemy is, in case that enemy moves out of the way and acts earlier
-        if (move == Vector3Int.zero || plannedTile.thingOnTile is not Things.Nothing)
+        if( !gameManager.gridManager.grid.ContainsKey(GridPosition + move) || move == Vector3Int.zero || plannedTile.thingOnTile is not Things.Nothing )
         {
             // Debug.Log($"Something on planned tile ({plannedTile.gridPos.x},{plannedTile.gridPos.y}): {plannedTile.thingOnTile}");
             yield break;
         }
 
         gameManager.gridManager.grid[GridPosition].thingOnTile = Things.Nothing;
+        // Debug.Log($"Thing on tile {GridPosition} assigned: {gameManager.gridManager.grid[GridPosition].thingOnTile}");
         // the enemy will never plan to move out of bounds
         // at this point, we know the move is valid, so just execute it
         logicPoint.position += move;
         GridPosition = Vector3Int.FloorToInt(logicPoint.position);
         gameManager.gridManager.grid[GridPosition].thingOnTile = Things.Enemy;
-
+        // Debug.Log($"Thing on tile {GridPosition} assigned: {gameManager.gridManager.grid[GridPosition].thingOnTile}");
 
         // IEnumerator return
         yield return null;

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public enum PlannedAction
 {
@@ -38,8 +39,11 @@ public class EnemyMovementLogic : MonoBehaviour
             bool crit = critCheck < enemy.critChance;
             int damage = crit ? (int)(enemy.critMult * enemy.atk) : enemy.atk;
 
-            // deal damage to the enemy
+            // deal damage to the player
             player.hp = Mathf.Max(0, player.hp - damage);
+            Debug.Log($"Attacked Player! Player HP: {player.hp} / {player.maxhp}");
+
+            // insert fail/reset script here
         }
     }
 
@@ -93,17 +97,18 @@ public class EnemyMovementLogic : MonoBehaviour
             }
         }
 
-        //Debug.Log(
-        //    $"Enemy selected move {move}, " +
-        //    $"planned action {plannedAction}"
-        //);
-
         // if we planned a move into the tile the player is in, then we planned an attack
         if (enemy.gameManager.gridManager.grid[pos + move].thingOnTile is Things.Player)
         {
             plannedAction = PlannedAction.Attack;
             // Debug.Log($"Enemy plans to attack in direction {move}");
         }
+
+        Debug.Log(
+           $"Enemy selected move {move}, " +
+           $"planned action {plannedAction}" + 
+           $", Thing on target tile: {enemy.gameManager.gridManager.grid[pos + move].thingOnTile}"
+        );
 
         // when we exit, we have the best possible move for this logic stored in "move"
         return move;
@@ -214,6 +219,13 @@ public class EnemyMovementLogic : MonoBehaviour
 
     public Vector3Int GoalCamp(Vector3Int pos)
     {
+        // if the list of pois is empty, act with basic move
+        if( enemy.gameManager.registry.pois.Count == 0 )
+        {
+            Debug.Log("No POIs; defaulting to basic move");
+            return BasicEnemyMove(pos);
+        }
+
         Vector3Int move = Vector3Int.zero;
         Things[] acceptableThings = {
             Things.Nothing,
@@ -300,6 +312,13 @@ public class EnemyMovementLogic : MonoBehaviour
 
     public Vector3Int GoalProtect(Vector3Int pos)
     {
+        // if the list of pois is empty, act with smart move
+        if (enemy.gameManager.registry.pois.Count == 0)
+        {
+            Debug.Log("No POIs; defaulting to smart move");
+            return SmartEnemyMove(pos);
+        }
+
         Vector3Int move = Vector3Int.zero;
         Things[] acceptableThings = {
             Things.Nothing,
