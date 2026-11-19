@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using UnityEngine;
 
 public class Registry : MonoBehaviour
@@ -7,6 +8,9 @@ public class Registry : MonoBehaviour
     public GameManager gameManager;
     List<IEnemyTurn> enemies = new();   // the list containing all enemies currently in the game
     public List<GameObject> pois = new();
+
+    // we know that the bool will be of length 4 always
+    public Dictionary<Vector2Int, bool[]> rooms = new();
 
     
     // REGISTRATION OF ENEMIES AND POIS
@@ -94,6 +98,9 @@ public class Registry : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        // booleans correspond to N, E, S, W
+        bool[] startRoomExits = new bool[] { true, true, false, true };
+        rooms.Add(new Vector2Int(0, 0), startRoomExits);
         gameManager = GetComponent<GameManager>();
         StartCoroutine(InitialEnemyPhase());
     }

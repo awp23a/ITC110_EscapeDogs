@@ -39,6 +39,11 @@ public class EnemyController : MonoBehaviour, IEnemyTurn
     public float critMult;
 
 
+    void Awake()
+    {
+        gameManager = GameObject.Find("Canvas").GetComponent<GameManager>();
+    }
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
