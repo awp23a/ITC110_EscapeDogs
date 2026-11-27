@@ -47,7 +47,7 @@ public class Tile
 }
 
 // Specifying the execution order since the grid has to generate before anything else
-[DefaultExecutionOrder(-100)]
+[DefaultExecutionOrder(-200)]
 public class GridManager : MonoBehaviour
 {
     public GameManager gameManager;
@@ -90,9 +90,21 @@ public class GridManager : MonoBehaviour
 
     // Placeholder function to update the grid
     // Call this INSTEAD OF InitializeGrid when adding something to the world
-    void UpdateGrid()
+    public void UpdateGrid(Vector3Int[] addedFloorTiles)
     {
+        foreach( var pos in addedFloorTiles)
+        {
+            // for this one, we know each position passed in has a tile, so just add it to the dictionary
+            Vector3Int addPos = walkableFloor.WorldToCell(pos);
+            Tile tile = new(addPos.x, addPos.y);
+            if( !grid.ContainsKey(addPos) )
+            {
+                grid.Add(addPos, tile);
+            }
+        }
 
+        CalculatePlayerDistances();
+        // CalculatePOIDistances();     // commented out because it causes trouble while testing due to trigger order; will work once we're only placing prefabs after startup
     }
 
     // Calculate the distance from each tile to the player
@@ -155,7 +167,7 @@ public class GridManager : MonoBehaviour
     }
 
     // Calculate the distance from each tile to the nearest POI
-    public void CalculatePOIDistance()
+    public void CalculatePOIDistances()
     {
         // COPY/PASTED AND EDITED CalculatePlayerDistance
 

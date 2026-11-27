@@ -10,6 +10,7 @@ public enum TurnState
     Waiting
 }
 
+[DefaultExecutionOrder(-200)]
 public class GameManager : MonoBehaviour
 {
     // SCRIPT REFERENCES - OTHER SCRIPTS USE THESE

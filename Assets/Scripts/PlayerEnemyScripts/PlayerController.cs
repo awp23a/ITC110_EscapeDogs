@@ -80,7 +80,7 @@ public class PlayerController : MonoBehaviour
 
         // see if the tile exists and is empty
         Vector3Int targetTile = Vector3Int.FloorToInt(logicPoint.position + new Vector3(move.x, move.y, 0));
-        Debug.Log($"targetTile is {targetTile}");
+        // Debug.Log($"targetTile is {targetTile}; thing on targetTile is {gameManager.gridManager.grid[targetTile].thingOnTile}");
 
         if( gameManager.gridManager.grid.ContainsKey(targetTile) )
         {
@@ -122,7 +122,9 @@ public class PlayerController : MonoBehaviour
                     gameManager.StartEnemyTurn();
                     break;
                 case Things.Interactable:
-                    // insert pickup function here
+                    GameObject interactable = gameManager.registry.GetPOIAtPosition(targetTile);
+                    IPOI poi = interactable.GetComponent<IPOI>();
+                    poi.Interact();
                     // Debug.Log("Player chose to interact; starting enemy turn");
                     gameManager.StartEnemyTurn();
                     break;
