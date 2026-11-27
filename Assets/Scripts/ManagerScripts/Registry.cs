@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using UnityEngine;
 
+[DefaultExecutionOrder(-250)]
 public class Registry : MonoBehaviour
 {
     public GameManager gameManager;
@@ -81,6 +82,19 @@ public class Registry : MonoBehaviour
             if ( enemy.GridPosition == pos )
             {
                 return enemy;
+            }
+        }
+
+        return null;
+    }
+
+    public GameObject GetPOIAtPosition(Vector3Int pos)
+    {
+        foreach (GameObject poi in pois)
+        {
+            if (Vector3Int.FloorToInt(poi.transform.position) == pos)
+            {
+                return poi;
             }
         }
 

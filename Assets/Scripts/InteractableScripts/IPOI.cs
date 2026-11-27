@@ -14,7 +14,7 @@ public interface IPOI
     }
 
     // collection method
-    private void OnCollect() { }
+    public void Interact() { }
 
     public void DestroySelf() { }
 

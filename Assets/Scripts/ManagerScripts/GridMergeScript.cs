@@ -2,6 +2,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
+public enum EntryDirection
+{
+    North,
+    East,
+    South,
+    West
+}
+
+[DefaultExecutionOrder(-200)]
 public class GridMergeScript : MonoBehaviour
 {
     Tilemap sourceFloor;
@@ -9,6 +18,13 @@ public class GridMergeScript : MonoBehaviour
     Tilemap targetFloor;
     Tilemap targetWalls;
     GridManager gridManager;
+    public Vector2Int placeRoomPos;
+    public bool[] exits;
+    public GameObject DoorN;
+    public GameObject DoorE;
+    public GameObject DoorS;
+    public GameObject DoorW;
+    public EntryDirection entry;
 
     void Awake()
     {
@@ -83,7 +99,54 @@ public class GridMergeScript : MonoBehaviour
 
         gridManager.UpdateGrid(transferFloorPositions.ToArray());
 
-        // now, we add the room to the registry
+        GameObject newDoorN = null;
+        GameObject newDoorE = null;
+        GameObject newDoorS = null;
+        GameObject newDoorW = null;
+
+        // place doors with three criteria
+        //  - The door exists
+        //  - It isn't the direction we came from
+        //  - There isn't alread a door there
+        // make sure each door knows what room it's in
+        if( exits[0] && entry is not EntryDirection.North )
+        {
+            Vector3 doorPos = transform.position + new Vector3(-0.5f, 7.5f, 0);
+            if( !gridManager.grid.ContainsKey(Vector3Int.FloorToInt(doorPos)) || gridManager.grid[Vector3Int.FloorToInt(doorPos)].thingOnTile != Things.Interactable )
+            {
+                newDoorN = Instantiate(DoorN, doorPos, transform.rotation);
+                newDoorN.GetComponent<Door>().roomPos = placeRoomPos;
+            }
+        }
+        if( exits[1] && entry is not EntryDirection.East )
+        {
+            Vector3 doorPos = transform.position + new Vector3(7.5f, -0.5f, 0);
+            if( !gridManager.grid.ContainsKey(Vector3Int.FloorToInt(doorPos)) || gridManager.grid[Vector3Int.FloorToInt(doorPos)].thingOnTile != Things.Interactable )
+            {
+                newDoorE = Instantiate(DoorE, doorPos, transform.rotation);
+                newDoorE.GetComponent<Door>().roomPos = placeRoomPos;
+            }
+        }
+        if( exits[2] && entry is not EntryDirection.South )
+        {
+            Vector3 doorPos = transform.position + new Vector3(-0.5f, -8.5f, 0);
+            if( !gridManager.grid.ContainsKey(Vector3Int.FloorToInt(doorPos)) || gridManager.grid[Vector3Int.FloorToInt(doorPos)].thingOnTile != Things.Interactable )
+            {
+                newDoorS = Instantiate(DoorS, doorPos, transform.rotation);
+                newDoorS.GetComponent<Door>().roomPos = placeRoomPos;
+            }
+        }
+        if( exits[3] && entry is not EntryDirection.West )
+        {
+            Vector3 doorPos = transform.position + new Vector3(-8.5f, -0.5f, 0);
+            if( !gridManager.grid.ContainsKey(Vector3Int.FloorToInt(doorPos)) || gridManager.grid[Vector3Int.FloorToInt(doorPos)].thingOnTile != Things.Interactable )
+            {
+                newDoorW = Instantiate(DoorW, doorPos, transform.rotation);
+                newDoorW.GetComponent<Door>().roomPos = placeRoomPos;
+            }
+        }
+
+
 
         Destroy(gameObject);
     }

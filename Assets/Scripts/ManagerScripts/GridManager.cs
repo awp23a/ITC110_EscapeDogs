@@ -47,7 +47,7 @@ public class Tile
 }
 
 // Specifying the execution order since the grid has to generate before anything else
-[DefaultExecutionOrder(-100)]
+[DefaultExecutionOrder(-200)]
 public class GridManager : MonoBehaviour
 {
     public GameManager gameManager;
@@ -97,7 +97,10 @@ public class GridManager : MonoBehaviour
             // for this one, we know each position passed in has a tile, so just add it to the dictionary
             Vector3Int addPos = walkableFloor.WorldToCell(pos);
             Tile tile = new(addPos.x, addPos.y);
-            grid.Add(addPos, tile);
+            if( !grid.ContainsKey(addPos) )
+            {
+                grid.Add(addPos, tile);
+            }
         }
 
         CalculatePlayerDistances();
